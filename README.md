@@ -36,11 +36,16 @@ skills/anomaly-hunter/
     └── evals.json                    # 8 evaluation scenarios
 ```
 
+## Install
+
+```
+npx skills add tylergibbs1/anohunter
+```
+
 ## Quick start
 
-1. Clone this repo (or copy `skills/anomaly-hunter/` into your project's skills directory)
-2. Write a `program.md` in your working directory defining your target system, predictor, input parameters, and what you're curious about
-3. Ask Claude to run an anomaly hunt
+1. Write a `program.md` in your working directory defining your target system, predictor, input parameters, and what you're curious about
+2. Ask Claude to run an anomaly hunt
 
 ### Example program.md
 
