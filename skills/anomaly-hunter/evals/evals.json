@@ -1,0 +1,105 @@
+{
+  "skill_name": "anomaly-hunter",
+  "evals": [
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "I have a fluid dynamics simulation and an analytical predictor. I want to find where the simulation behaves unexpectedly. Can you set up an anomaly hunt?",
+      "files": [],
+      "expected_behavior": [
+        "Should ask for or read program.md with target system, predictor, parameters, and constraints",
+        "Should validate both target and predictor systems before starting experiments",
+        "Should begin with a broad initial survey using systematic sampling across the parameter space",
+        "Should use contextual surprise scoring (not just raw deviation) once enough history exists",
+        "Should NOT try to optimize any metric — should explore for surprises"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "I found an anomaly at Reynolds number 12400 with a surprise score of 4.7 sigma. What should I do next?",
+      "files": [],
+      "expected_behavior": [
+        "Should recommend confirming reproducibility first (3 runs of same inputs)",
+        "Should then recommend marginal boundary mapping (vary one parameter at a time)",
+        "Should suggest bisection to find precise boundary points",
+        "Should check for parameter interactions if multiple parameters affect the anomaly",
+        "Should enforce exploitation budget — not spend all remaining experiments on this one anomaly",
+        "Should mention discovery mode as the next step after boundary mapping if anomaly is confirmed"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "My anomaly hunt is finding too many anomalies — over 40% of experiments are flagged. What's wrong?",
+      "files": [],
+      "expected_behavior": [
+        "Should diagnose that the predictor is likely too inaccurate for the scoring threshold",
+        "Should suggest raising the surprise threshold or tightening the predictor",
+        "Should recommend contextual weighted scoring to adapt to regional predictor accuracy",
+        "Should suggest targeting a 5-15% anomaly rate during steady-state exploration",
+        "Should NOT suggest ignoring the anomalies — each might be real despite the noise"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "I want to hunt for anomalies in a trained ML model — find inputs where it confidently gives wrong answers. How should I structure the program.md?",
+      "files": [],
+      "expected_behavior": [
+        "Should help structure program.md with the ML model as target system",
+        "Should suggest appropriate predictors (ground truth labels, a different model, or known invariants)",
+        "Should define input parameters relevant to ML (feature values, input perturbations)",
+        "Should recommend confidence-weighted scoring (high confidence + wrong answer = high surprise)",
+        "Should warn about degenerate inputs and suggest constraining input space to valid examples"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "Run an anomaly hunt on my physics simulation. Here's my program.md with the target, predictor, and parameters defined.",
+      "files": ["program.md"],
+      "expected_behavior": [
+        "Should validate target and predictor systems before starting",
+        "Should create anomaly-log/, discovery-log/, and experiment-log/ directories",
+        "Should begin with Phase 1 initial survey (20-30 experiments across parameter space)",
+        "Should transition to Phase 2 steady-state exploration with anomaly investigation",
+        "Should enter discovery mode for confirmed anomalies (literature check, hypotheses, discriminating experiments)",
+        "Should generate a nightly summary report at end of session",
+        "Should balance exploration (40%) and exploitation (60%) throughout the hunt"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "I confirmed a reproducible anomaly in my simulation and mapped its boundary. Now I want to understand WHY it happens. Can you enter discovery mode?",
+      "files": [],
+      "expected_behavior": [
+        "Should start with a literature check — search external sources before generating hypotheses",
+        "Should report what was searched and what was found, even if nothing relevant",
+        "Should generate 3-5 specific, testable hypotheses (not vague 'interaction effects')",
+        "Should include at least one 'boring' hypothesis (numerical artifact, predictor bug)",
+        "Should design discriminating experiments with predictions logged BEFORE running",
+        "Should track belief state across hypotheses as experiments complete"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "My agent's discovery mode keeps claiming it discovered things that are already well-known in the literature. How do I fix this?",
+      "files": [],
+      "expected_behavior": [
+        "Should emphasize the literature check must happen FIRST, before hypothesis generation",
+        "Should recommend broader search queries covering the specific observable, system type, and input regime",
+        "Should suggest checking multiple sources (arxiv, google scholar, github issues, system docs, Wikipedia)",
+        "Should recommend the agent mark 'known phenomenon' and move on rather than generating hypotheses",
+        "Should note that preventing false discovery claims is a success, not a failure"
+      ]
+    },
+    {
+      "skills": ["anomaly-hunter"],
+      "query": "Discovery mode completed but two hypotheses survived — the agent couldn't distinguish between them. What now?",
+      "files": [],
+      "expected_behavior": [
+        "Should validate that the agent honestly reported the ambiguity rather than picking a favorite",
+        "Should suggest what additional tools or experiments outside the current system could distinguish them",
+        "Should recommend updating program.md with the specific disambiguation needed",
+        "Should note this is a valid outcome — honest uncertainty is better than false confidence",
+        "Should check if the discovery report includes the 'What would close this' section with concrete next steps"
+      ]
+    }
+  ]
+}
