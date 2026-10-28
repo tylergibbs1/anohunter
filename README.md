@@ -6,6 +6,17 @@ You give it a system with predictable behavior and a model of what that behavior
 
 The output isn't a better model. It's a list of "you should look at this" with evidence.
 
+## Quick start
+
+```
+npx skills add tylergibbs1/anohunter
+```
+
+1. Write a `program.md` in your working directory defining your target system, predictor, input parameters, and what you're curious about
+2. Ask Claude to run an anomaly hunt
+
+See the [example program.md](#example-programmd) below.
+
 ## How it works
 
 ```
@@ -20,32 +31,27 @@ The output isn't a better model. It's a list of "you should look at this" with e
 
 The agent balances **exploration** (~40% — trying new input regions) with **exploitation** (~60% — probing deeper around known anomalies). It's not hill-climbing. It's terrain-mapping.
 
-## What's in this repo
+## The two modes
 
-This is a [Claude Code Skill](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview) — a structured set of instructions that Claude loads when you ask it to hunt for anomalies.
+### Anomaly hunting
 
-```
-skills/anomaly-hunter/
-├── SKILL.md                          # Main instructions (loaded when triggered)
-├── references/
-│   ├── discovery-mode.md             # Hypothesis generation and testing protocol
-│   ├── exploration-strategies.md     # Sampling, boundary finding, budget enforcement
-│   ├── implementation-guide.md       # Step-by-step operational playbook
-│   └── scoring-methods.md            # Surprise scoring implementations
-└── evals/
-    └── evals.json                    # 8 evaluation scenarios
-```
+Find where predictions fail. Map boundaries. Check reproducibility. The core loop runs experiments, scores surprise (deviation normalized by local predictor accuracy), and logs anything above threshold.
 
-## Install
+### Discovery mode
 
-```
-npx skills add tylergibbs1/anohunter
-```
+Triggered after an anomaly is confirmed and boundary-mapped. The agent:
 
-## Quick start
+1. **Checks the literature** — has anyone described this before? If yes, logs the reference and moves on. This prevents enthusiastic rediscovery of well-known phenomena.
+2. **Generates hypotheses** — 3-5 specific, testable candidates. "Interaction effect" is not a hypothesis. "Upstream wake low-pressure at 2-3 diameters creates reverse flow" is.
+3. **Designs discriminating experiments** — for each hypothesis pair, finds inputs that would produce different outcomes. Logs predictions *before* running.
+4. **Reports honestly** — a defended mechanism, genuine ambiguity, or "this is weirder than I can explain."
 
-1. Write a `program.md` in your working directory defining your target system, predictor, input parameters, and what you're curious about
-2. Ask Claude to run an anomaly hunt
+## What you do
+
+1. **Write the program.md** — define the territory, say what you're curious about, set constraints
+2. **Read the morning report** — judge which anomalies are real vs. artifacts (requires your domain expertise)
+3. **Update program.md** — redirect based on findings
+4. **Review discovery reports** — the agent proposes mechanisms, you judge whether they're correct
 
 ### Example program.md
 
@@ -78,27 +84,21 @@ Returns same JSON schema with expected values.
 - No more than 10 consecutive boundary probes before returning to exploration
 ```
 
-## The two modes
+## What's in this repo
 
-### Anomaly hunting
+This is a [Claude Code Skill](https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/overview) — a structured set of instructions that Claude loads when you ask it to hunt for anomalies.
 
-Find where predictions fail. Map boundaries. Check reproducibility. The core loop runs experiments, scores surprise (deviation normalized by local predictor accuracy), and logs anything above threshold.
-
-### Discovery mode
-
-Triggered after an anomaly is confirmed and boundary-mapped. The agent:
-
-1. **Checks the literature** — has anyone described this before? If yes, logs the reference and moves on. This prevents enthusiastic rediscovery of well-known phenomena.
-2. **Generates hypotheses** — 3-5 specific, testable candidates. "Interaction effect" is not a hypothesis. "Upstream wake low-pressure at 2-3 diameters creates reverse flow" is.
-3. **Designs discriminating experiments** — for each hypothesis pair, finds inputs that would produce different outcomes. Logs predictions *before* running.
-4. **Reports honestly** — a defended mechanism, genuine ambiguity, or "this is weirder than I can explain."
-
-## What you do
-
-1. **Write the program.md** — define the territory, say what you're curious about, set constraints
-2. **Read the morning report** — judge which anomalies are real vs. artifacts (requires your domain expertise)
-3. **Update program.md** — redirect based on findings
-4. **Review discovery reports** — the agent proposes mechanisms, you judge whether they're correct
+```
+skills/anomaly-hunter/
+├── SKILL.md                          # Main instructions (loaded when triggered)
+├── references/
+│   ├── discovery-mode.md             # Hypothesis generation and testing protocol
+│   ├── exploration-strategies.md     # Sampling, boundary finding, budget enforcement
+│   ├── implementation-guide.md       # Step-by-step operational playbook
+│   └── scoring-methods.md            # Surprise scoring implementations
+└── evals/
+    └── evals.json                    # 8 evaluation scenarios
+```
 
 ## Success criteria
 
